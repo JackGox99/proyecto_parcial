@@ -1,5 +1,9 @@
-// Pie de pagina con enlaces internos y enlaces externos.
+// ----- Componente -----
+// Qué hace: dibuja el pie de página con los enlaces internos y externos.
 function PiePagina({ cambiarSeccion }) {
+  // ----- Objetos -----
+  // Qué hace: arreglo de objetos con el texto y la dirección de cada enlace
+  // externo.
   const enlacesExternos = [
     { texto: 'React', url: 'https://react.dev' },
     { texto: 'MDN Web Docs', url: 'https://developer.mozilla.org' },
@@ -12,6 +16,9 @@ function PiePagina({ cambiarSeccion }) {
 
       <h3>TecnoStore</h3>
 
+      {/* ----- Enlaces ----- */}
+      {/* Qué hace: enlaces internos. Cada uno evita la recarga de la página
+          con preventDefault y luego cambia la sección que se muestra. */}
       <p>Secciones del sitio:</p>
       <ul>
         <li>
@@ -49,9 +56,11 @@ function PiePagina({ cambiarSeccion }) {
         </li>
       </ul>
 
+      {/* ----- Enlaces ----- */}
+      {/* Qué hace: enlaces externos. Se abren en otra pestaña con target
+          blank, y rel="noreferrer" es buena práctica de seguridad. */}
       <p>Tecnologias utilizadas:</p>
       <ul>
-        {/* rel="noreferrer" es una buena practica al abrir enlaces externos */}
         {enlacesExternos.map((enlace) => (
           <li key={enlace.url}>
             <a href={enlace.url} target="_blank" rel="noreferrer">

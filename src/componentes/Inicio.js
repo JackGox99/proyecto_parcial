@@ -1,10 +1,12 @@
 import { PRODUCTOS } from '../datos/productos';
 import { formatearPrecio } from '../datos/tasasCambio';
 
-// Pagina principal. Presenta la tienda, explica la motivacion del tema
-// y muestra los productos destacados calculados desde el catalogo.
+// ----- Componente -----
+// Qué hace: es la página principal. Presenta la tienda, explica por qué
+// escogimos el tema y muestra los productos destacados.
 function Inicio({ moneda, cambiarSeccion, agregarAlCarrito }) {
-  // Se toman los tres productos mas economicos que esten disponibles.
+  // Qué hace: saca los tres productos disponibles más económicos. No están
+  // escritos a mano, se calculan desde el catálogo en cada render.
   const destacados = PRODUCTOS
     .filter((producto) => producto.disponible)
     .sort((a, b) => a.precio - b.precio)

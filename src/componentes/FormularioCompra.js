@@ -2,16 +2,21 @@ import { useState } from 'react';
 
 const CIUDADES = ['Bogota', 'Medellin', 'Cali', 'Barranquilla', 'Neiva'];
 
+// ----- Objetos -----
+// Qué hace: guarda los métodos de pago. La llave se usa en el código y el
+// valor es el texto que ve el usuario.
 const METODOS_PAGO = {
   tarjeta: 'Tarjeta de credito',
   pse: 'PSE / debito bancario',
   contraentrega: 'Pago contra entrega',
 };
 
-// Formulario de cierre de compra.
-// Sigue el mismo patron del formulario de registro visto en clase:
-// un objeto para los datos, otro para los errores y una funcion que valida.
+// ----- Componente -----
+// Qué hace: dibuja el formulario de cierre de compra con sus validaciones.
 function FormularioCompra({ totalTexto, confirmarCompra }) {
+  // ----- Función useState -----
+  // Qué hace: un objeto guarda lo que el usuario escribe en cada campo y otro
+  // guarda los mensajes de error de los campos que estén mal.
   const [datos, setDatos] = useState({
     nombre: '',
     email: '',
@@ -24,7 +29,9 @@ function FormularioCompra({ totalTexto, confirmarCompra }) {
 
   const [errores, setErrores] = useState({});
 
-  // Un solo manejador para todos los campos, usando el atributo name.
+  // ----- Evento -----
+  // Qué hace: atiende el cambio de todos los campos con una sola función. Usa
+  // el atributo name del input como llave para saber cuál campo actualizar.
   function manejarCambio(evento) {
     const { name, type, value, checked } = evento.target;
 
@@ -34,7 +41,9 @@ function FormularioCompra({ totalTexto, confirmarCompra }) {
     });
   }
 
-  // Devuelve un objeto con un mensaje por cada campo invalido.
+  // ----- Validaciones -----
+  // Qué hace: revisa campo por campo y devuelve un objeto con un mensaje por
+  // cada campo que esté mal. Si todo está bien, devuelve el objeto vacío.
   function validar() {
     const nuevosErrores = {};
 
@@ -68,6 +77,9 @@ function FormularioCompra({ totalTexto, confirmarCompra }) {
     return nuevosErrores;
   }
 
+  // ----- Evento -----
+  // Qué hace: atiende el envío del formulario. preventDefault evita que la
+  // página se recargue. Si hay errores se muestran y no se envía nada.
   function manejarEnvio(evento) {
     evento.preventDefault();
 
@@ -90,6 +102,9 @@ function FormularioCompra({ totalTexto, confirmarCompra }) {
       <h3>Datos de envio y pago</h3>
       <p>Total a pagar: {totalTexto}</p>
 
+      {/* ----- Formulario ----- */}
+      {/* Qué hace: recoge los datos de envío y pago. Cada campo toma su valor
+          del estado y lo actualiza con onChange: son campos controlados. */}
       <form onSubmit={manejarEnvio}>
         <p>
           <label htmlFor="nombre">Nombre completo: </label>
@@ -100,6 +115,7 @@ function FormularioCompra({ totalTexto, confirmarCompra }) {
             value={datos.nombre}
             onChange={manejarCambio}
           />
+          {/* Muestra el mensaje solo si ese campo tiene error. */}
           {errores.nombre && <strong> {errores.nombre}</strong>}
         </p>
 
@@ -160,7 +176,8 @@ function FormularioCompra({ totalTexto, confirmarCompra }) {
 
         <fieldset>
           <legend>Metodo de pago</legend>
-          {/* Los radio buttons se generan recorriendo un objeto, como en clase */}
+          {/* Qué hace: genera un radio button por cada método recorriendo el
+              objeto METODOS_PAGO con Object.entries. */}
           {Object.entries(METODOS_PAGO).map(([clave, texto]) => (
             <p key={clave}>
               <label>

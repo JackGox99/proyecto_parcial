@@ -5,8 +5,13 @@ import FormularioCompra from './FormularioCompra';
 const COSTO_ENVIO = 15000;
 const MINIMO_ENVIO_GRATIS = 1000000;
 
-// Resumen del carrito, calculo de totales y cierre de la compra.
+// ----- Componente -----
+// Qué hace: muestra el resumen del carrito, calcula los totales y cierra la
+// compra.
 function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarCarrito, cambiarSeccion }) {
+  // ----- Función useState -----
+  // Qué hace: guarda el pedido ya confirmado. Mientras vale null se muestra
+  // el carrito; cuando tiene datos se muestra el comprobante de compra.
   const [pedido, setPedido] = useState(null);
 
   // reduce recorre el arreglo y acumula el valor de cada linea.

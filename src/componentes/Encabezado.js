@@ -1,8 +1,12 @@
 import { TASAS_CAMBIO } from '../datos/tasasCambio';
 
-// Barra superior con los enlaces de navegacion y el selector de moneda.
-// Recibe por props el estado que vive en App y las funciones que lo modifican.
+// ----- Componente -----
+// Qué hace: dibuja la barra superior con la navegación y el selector de
+// moneda. Recibe por props el estado que vive en App.
 function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, unidades }) {
+  // ----- Objetos -----
+  // Qué hace: arreglo de objetos con los enlaces del menú. Cada objeto tiene
+  // la clave de la sección y el texto que se muestra.
   const enlaces = [
     { clave: 'inicio', texto: 'Inicio' },
     { clave: 'catalogo', texto: 'Catalogo' },
@@ -10,7 +14,9 @@ function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, unidades }) {
     { clave: 'contacto', texto: 'Contacto' },
   ];
 
-  // Evita que el navegador recargue la pagina y cambia la seccion con useState.
+  // ----- Evento -----
+  // Qué hace: responde al clic en un enlace. preventDefault evita que el
+  // navegador recargue la página, y luego se cambia de sección.
   function manejarClic(evento, clave) {
     evento.preventDefault();
     cambiarSeccion(clave);
@@ -21,6 +27,9 @@ function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, unidades }) {
       <h1>TecnoStore</h1>
       <p>Tienda en linea de tecnologia para estudiantes de ingenieria.</p>
 
+      {/* ----- Enlaces ----- */}
+      {/* Qué hace: recorre el arreglo con map y pinta un enlace por cada
+          sección. El enlace marcado en negrita es el que se está viendo. */}
       <nav>
         <ul>
           {enlaces.map((enlace) => (
@@ -38,6 +47,9 @@ function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, unidades }) {
 
       <p>
         <label htmlFor="moneda">Ver precios en: </label>
+        {/* ----- Evento ----- */}
+        {/* Qué hace: onChange se dispara al elegir otra moneda y guarda la
+            selección en el estado, lo que cambia los precios de toda la app. */}
         <select
           id="moneda"
           value={moneda}

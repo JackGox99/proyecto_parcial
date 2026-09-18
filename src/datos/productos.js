@@ -1,6 +1,8 @@
-// Catalogo de la tienda.
-// Cada producto es un objeto literal y "especificaciones" es un sub-objeto,
-// igual que el ejemplo del carro con "confort" que trabajamos en clase.
+// ----- Objetos -----
+// Qué hace: guarda el catálogo de la tienda. Es un arreglo de objetos. Cada
+// producto es un objeto con sus propiedades, y "especificaciones" es otro
+// objeto dentro del objeto, igual que el ejemplo del carro con "confort"
+// que trabajamos en clase.
 
 export const CATEGORIAS = ['Portatiles', 'Perifericos', 'Componentes', 'Monitores'];
 

@@ -6,19 +6,26 @@ import Carrito from './componentes/Carrito';
 import Contacto from './componentes/Contacto';
 import PiePagina from './componentes/PiePagina';
 
-// Componente raiz. Aqui viven las variables de estado que comparten
-// varios componentes: la seccion visible, el carrito y la moneda.
+// ----- Componente -----
+// Qué hace: es el componente raíz. Contiene a todos los demás y guarda el
+// estado que varias pantallas necesitan compartir.
 function App() {
+  // ----- Función useState -----
+  // Qué hace: guarda la sección que se está viendo, los productos del carrito
+  // y la moneda en la que se muestran los precios.
   const [seccion, setSeccion] = useState('inicio');
   const [carrito, setCarrito] = useState([]);
   const [moneda, setMoneda] = useState('COP');
 
+  // ----- Función -----
+  // Qué hace: cambia la sección que se muestra en pantalla.
   function cambiarSeccion(nueva) {
     setSeccion(nueva);
   }
 
-  // Si el producto ya esta en el carrito se aumenta la cantidad,
-  // si no, se agrega una linea nueva con cantidad 1.
+  // ----- Función -----
+  // Qué hace: agrega un producto al carrito. Si ya estaba, le sube la cantidad
+  // en lugar de repetir la fila.
   function agregarAlCarrito(producto) {
     const yaEsta = carrito.find((item) => item.codigo === producto.codigo);
 
@@ -36,7 +43,9 @@ function App() {
     setSeccion('carrito');
   }
 
-  // El input devuelve texto, por eso se convierte a numero y se limita el rango.
+  // ----- Función -----
+  // Qué hace: cambia la cantidad de un producto del carrito. El input devuelve
+  // texto, por eso se convierte a número y se limita entre 1 y 10.
   function cambiarCantidad(codigo, valor) {
     const numero = parseInt(valor, 10);
 
@@ -53,18 +62,25 @@ function App() {
     setCarrito(actualizado);
   }
 
-  // filter devuelve un arreglo nuevo sin el producto eliminado.
+  // ----- Función -----
+  // Qué hace: saca un producto del carrito. filter devuelve un arreglo nuevo
+  // sin ese producto.
   function eliminarDelCarrito(codigo) {
     setCarrito(carrito.filter((item) => item.codigo !== codigo));
   }
 
+  // ----- Función -----
+  // Qué hace: deja el carrito vacío.
   function vaciarCarrito() {
     setCarrito([]);
   }
 
+  // Suma cuántas unidades hay en total para mostrarlas en el encabezado.
   const unidades = carrito.reduce((total, item) => total + item.cantidad, 0);
 
-  // Decide que componente se muestra segun el estado "seccion".
+  // ----- Función -----
+  // Qué hace: decide cuál componente se muestra según el estado "seccion".
+  // Lo que se escribe dentro de cada etiqueta son las props que recibe el hijo.
   function mostrarSeccion() {
     if (seccion === 'catalogo') {
       return <Catalogo moneda={moneda} agregarAlCarrito={agregarAlCarrito} />;

@@ -4,8 +4,13 @@ const MAX_CARACTERES = 300;
 
 const ASUNTOS = ['Estado de mi pedido', 'Garantia', 'Asesoria de compra', 'Otro'];
 
-// Formulario de contacto con contador de caracteres y validaciones propias.
+// ----- Componente -----
+// Qué hace: dibuja el formulario de contacto, con contador de caracteres y
+// sus propias validaciones.
 function Contacto() {
+  // ----- Función useState -----
+  // Qué hace: un objeto guarda lo que el usuario escribe, otro los errores,
+  // y una bandera recuerda si el mensaje ya se envió.
   const [datos, setDatos] = useState({
     nombre: '',
     email: '',
@@ -16,9 +21,13 @@ function Contacto() {
   const [errores, setErrores] = useState({});
   const [enviado, setEnviado] = useState(false);
 
+  // Se calculan en cada render a partir del mensaje, no se guardan aparte.
   const caracteresUsados = datos.mensaje.length;
   const caracteresRestantes = MAX_CARACTERES - caracteresUsados;
 
+  // ----- Evento -----
+  // Qué hace: atiende el cambio de todos los campos con una sola función,
+  // usando el atributo name del input como llave.
   function manejarCambio(evento) {
     const { name, value } = evento.target;
 
@@ -31,6 +40,9 @@ function Contacto() {
     setEnviado(false);
   }
 
+  // ----- Validaciones -----
+  // Qué hace: revisa los cuatro campos y devuelve un objeto con un mensaje
+  // por cada uno que esté mal. Si todo está bien, devuelve el objeto vacío.
   function validar() {
     const nuevosErrores = {};
 
@@ -53,6 +65,9 @@ function Contacto() {
     return nuevosErrores;
   }
 
+  // ----- Evento -----
+  // Qué hace: atiende el envío del formulario. preventDefault evita que la
+  // página se recargue. Si hay errores no se envía y se muestran los mensajes.
   function manejarEnvio(evento) {
     evento.preventDefault();
 
@@ -74,6 +89,9 @@ function Contacto() {
       <h2>Contactanos</h2>
       <p>Respondemos de lunes a viernes, de 8:00 a.m. a 6:00 p.m.</p>
 
+      {/* ----- Formulario ----- */}
+      {/* Qué hace: recoge el mensaje del cliente. Cada campo toma su valor del
+          estado y lo actualiza con onChange: son campos controlados. */}
       <form onSubmit={manejarEnvio}>
         <p>
           <label htmlFor="nombreContacto">Nombre: </label>
