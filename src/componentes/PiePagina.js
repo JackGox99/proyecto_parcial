@@ -69,13 +69,6 @@ function PiePagina({ cambiarSeccion }) {
           </li>
         ))}
       </ul>
-
-      <p>
-        <small>
-          Proyecto academico de Desarrollo en Plataformas. Primera entrega sin
-          estilos, enfocada en la funcionalidad.
-        </small>
-      </p>
     </footer>
   );
 }

@@ -54,10 +54,14 @@ src/
 | Objetos | `datos/productos.js`, con sub-objeto `especificaciones` |
 | Componentes | carpeta `componentes/`, ocho componentes con props |
 | useState | `App.js` (seccion, carrito, moneda), `Catalogo.js`, los formularios |
-| Valor agregado | conversion de precios entre monedas y carrito con cantidades |
+| Valor agregado | persistencia del carrito en `App.js` y conversion de monedas en `datos/tasasCambio.js` |
 
 ## Valor agregado
 
+- **El carrito sobrevive al refresco.** Se guarda en el almacenamiento del
+  navegador cada vez que cambia, y se vuelve a leer al abrir la pagina. Si
+  cierras la pestana y vuelves, tus productos y cantidades siguen ahi. Esta
+  implementado en `App.js`, en `leerCarritoGuardado()` y `guardarCarrito()`.
 - **Precios en varias monedas.** Los precios se guardan en pesos colombianos y se
   convierten al vuelo con la tabla de tasas del ejercicio de TypeScript que
   trabajamos en clase. El selector esta en el encabezado y afecta toda la pagina.
