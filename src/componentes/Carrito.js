@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { formatearPrecio } from '../datos/tasasCambio';
+import { rutaImagen } from '../datos/productos';
 import FormularioCompra from './FormularioCompra';
 
 const COSTO_ENVIO = 15000;
@@ -111,6 +112,7 @@ function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarC
       <table border="1">
         <thead>
           <tr>
+            <th>Imagen</th>
             <th>Producto</th>
             <th>Precio unitario</th>
             <th>Cantidad</th>
@@ -121,6 +123,15 @@ function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarC
         <tbody>
           {carrito.map((item) => (
             <tr key={item.codigo}>
+              <td>
+                {/* ----- Imágenes ----- */}
+                <img
+                  src={rutaImagen(item)}
+                  alt={item.nombre}
+                  width="110"
+                  height="76"
+                />
+              </td>
               <td>{item.nombre}</td>
               <td>{formatearPrecio(item.precio, moneda)}</td>
               <td>
@@ -145,17 +156,17 @@ function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarC
         </tbody>
         <tfoot>
           <tr>
-            <th colSpan="3">Subtotal</th>
+            <th colSpan="4">Subtotal</th>
             <td colSpan="2">{formatearPrecio(subtotal, moneda)}</td>
           </tr>
           <tr>
-            <th colSpan="3">Envio</th>
+            <th colSpan="4">Envio</th>
             <td colSpan="2">
               {envio === 0 ? 'Gratis' : formatearPrecio(envio, moneda)}
             </td>
           </tr>
           <tr>
-            <th colSpan="3">Total</th>
+            <th colSpan="4">Total</th>
             <td colSpan="2">
               <strong>{formatearPrecio(total, moneda)}</strong>
             </td>

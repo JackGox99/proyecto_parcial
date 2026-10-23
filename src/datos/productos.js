@@ -6,9 +6,31 @@
 
 export const CATEGORIAS = ['Portatiles', 'Perifericos', 'Componentes', 'Monitores'];
 
+// ----- Imágenes -----
+// ----- Función -----
+// Qué hace: arma la ruta de la imagen de un producto. Nuestros productos
+// guardan solo el nombre del archivo, que vive en la carpeta public. Los
+// productos que llegan del servidor ya traen la direccion completa.
+// process.env.PUBLIC_URL mantiene la ruta correcta aunque la aplicacion
+// quede publicada dentro de una subcarpeta del hosting.
+export function rutaImagen(producto) {
+  // Un carrito guardado antes de que existieran las imagenes, o un producto
+  // del servidor que venga sin foto, caen en la imagen de reemplazo.
+  if (!producto.imagen) {
+    return process.env.PUBLIC_URL + '/imagenes/sin-imagen.svg';
+  }
+
+  if (producto.imagen.startsWith('http')) {
+    return producto.imagen;
+  }
+
+  return process.env.PUBLIC_URL + '/imagenes/' + producto.imagen;
+}
+
 export const PRODUCTOS = [
   {
     codigo: 1,
+    imagen: 'portatil-lenovo.svg',
     nombre: 'Portatil Lenovo IdeaPad 3',
     categoria: 'Portatiles',
     marca: 'Lenovo',
@@ -25,6 +47,7 @@ export const PRODUCTOS = [
   },
   {
     codigo: 2,
+    imagen: 'portatil-asus.svg',
     nombre: 'Portatil ASUS TUF Gaming A15',
     categoria: 'Portatiles',
     marca: 'ASUS',
@@ -41,6 +64,7 @@ export const PRODUCTOS = [
   },
   {
     codigo: 3,
+    imagen: 'teclado-redragon.svg',
     nombre: 'Teclado mecanico Redragon Kumara',
     categoria: 'Perifericos',
     marca: 'Redragon',
@@ -57,6 +81,7 @@ export const PRODUCTOS = [
   },
   {
     codigo: 4,
+    imagen: 'mouse-logitech.svg',
     nombre: 'Mouse inalambrico Logitech M720',
     categoria: 'Perifericos',
     marca: 'Logitech',
@@ -73,6 +98,7 @@ export const PRODUCTOS = [
   },
   {
     codigo: 5,
+    imagen: 'ram-kingston.svg',
     nombre: 'Memoria RAM Kingston Fury 16 GB',
     categoria: 'Componentes',
     marca: 'Kingston',
@@ -89,6 +115,7 @@ export const PRODUCTOS = [
   },
   {
     codigo: 6,
+    imagen: 'ssd-samsung.svg',
     nombre: 'Disco solido Samsung 980 1 TB',
     categoria: 'Componentes',
     marca: 'Samsung',
@@ -105,6 +132,7 @@ export const PRODUCTOS = [
   },
   {
     codigo: 7,
+    imagen: 'monitor-lg.svg',
     nombre: 'Monitor LG UltraGear 24"',
     categoria: 'Monitores',
     marca: 'LG',
@@ -121,6 +149,7 @@ export const PRODUCTOS = [
   },
   {
     codigo: 8,
+    imagen: 'monitor-samsung.svg',
     nombre: 'Monitor Samsung ViewFinity 27"',
     categoria: 'Monitores',
     marca: 'Samsung',

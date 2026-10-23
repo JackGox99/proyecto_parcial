@@ -1,25 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Encabezado from './componentes/Encabezado';
 import Inicio from './componentes/Inicio';
 import Catalogo from './componentes/Catalogo';
+import Novedades from './componentes/Novedades';
 import Carrito from './componentes/Carrito';
 import Contacto from './componentes/Contacto';
 import PiePagina from './componentes/PiePagina';
 
 // Nombre con el que queda guardado el carrito dentro del navegador.
 const LLAVE_CARRITO = 'tecnostore-carrito';
-
-// ----- Función -----
-// Qué hace: lee el carrito que quedó guardado en el navegador. Si no hay nada
-// guardado, o si lo guardado está dañado, devuelve un carrito vacío.
-function leerCarritoGuardado() {
-  try {
-    const guardado = localStorage.getItem(LLAVE_CARRITO);
-    return guardado ? JSON.parse(guardado) : [];
-  } catch (error) {
-    return [];
-  }
-}
 
 // ----- Componente -----
 // Qué hace: es el componente raíz. Contiene a todos los demás y guarda el
@@ -28,26 +17,41 @@ function App() {
   // ----- Función useState -----
   // Qué hace: guarda la sección que se está viendo, los productos del carrito
   // y la moneda en la que se muestran los precios.
-  // El carrito no arranca vacío: arranca con lo que haya guardado el
-  // navegador. Se pasa la función sin paréntesis para que React la ejecute
-  // una sola vez, en el primer render.
   const [seccion, setSeccion] = useState('inicio');
-  const [carrito, setCarrito] = useState(leerCarritoGuardado);
+  const [carrito, setCarrito] = useState([]);
   const [moneda, setMoneda] = useState('COP');
 
-  // ----- Función -----
-  // Qué hace: actualiza el carrito en pantalla y lo guarda en el navegador.
-  // El almacenamiento solo admite texto, por eso el arreglo se convierte con
-  // JSON.stringify. Todas las funciones del carrito llaman a esta.
-  function guardarCarrito(nuevoCarrito) {
-    setCarrito(nuevoCarrito);
-
+  // ----- Hook de efecto useEffect -----
+  // Qué hace: lee el carrito guardado en el navegador. El arreglo vacío del
+  // final significa "ejecútate una sola vez", al abrir la página.
+  useEffect(() => {
     try {
-      localStorage.setItem(LLAVE_CARRITO, JSON.stringify(nuevoCarrito));
+      const guardado = JSON.parse(localStorage.getItem(LLAVE_CARRITO));
+
+      if (guardado) {
+        setCarrito(guardado);
+      }
     } catch (error) {
-      // Si el navegador no deja guardar, la tienda sigue funcionando igual.
+      // Si lo guardado quedo dañado, se arranca con el carrito vacio.
     }
-  }
+  }, []);
+
+  // ----- Hook de efecto useEffect -----
+  // Qué hace: guarda el carrito en el navegador. El [carrito] del final
+  // significa "ejecútate cada vez que el carrito cambie".
+  useEffect(() => {
+    localStorage.setItem(LLAVE_CARRITO, JSON.stringify(carrito));
+  }, [carrito]);
+
+  // Suma cuántas unidades hay en total para mostrarlas en el encabezado.
+  const unidades = carrito.reduce((total, item) => total + item.cantidad, 0);
+
+  // ----- Hook de efecto useEffect -----
+  // Qué hace: escribe el número de unidades en el título de la pestaña del
+  // navegador. Se vuelve a ejecutar cada vez que cambian las unidades.
+  useEffect(() => {
+    document.title = unidades > 0 ? `TecnoStore (${unidades})` : 'TecnoStore';
+  }, [unidades]);
 
   // ----- Función -----
   // Qué hace: cambia la sección que se muestra en pantalla.
@@ -57,8 +61,9 @@ function App() {
 
   // ----- Función -----
   // Qué hace: agrega un producto al carrito. Si ya estaba, le sube la cantidad
-  // en lugar de repetir la fila.
-  function agregarAlCarrito(producto) {
+  // en lugar de repetir la fila. Cuando el producto llega arrastrado se pasa
+  // irAlCarrito en false, para no sacar al usuario de la pantalla.
+  function agregarAlCarrito(producto, irAlCarrito = true) {
     const yaEsta = carrito.find((item) => item.codigo === producto.codigo);
 
     if (yaEsta) {
@@ -67,12 +72,14 @@ function App() {
           ? { ...item, cantidad: item.cantidad + 1 }
           : item
       );
-      guardarCarrito(actualizado);
+      setCarrito(actualizado);
     } else {
-      guardarCarrito([...carrito, { ...producto, cantidad: 1 }]);
+      setCarrito([...carrito, { ...producto, cantidad: 1 }]);
     }
 
-    setSeccion('carrito');
+    if (irAlCarrito) {
+      setSeccion('carrito');
+    }
   }
 
   // ----- Función -----
@@ -91,31 +98,44 @@ function App() {
       item.codigo === codigo ? { ...item, cantidad } : item
     );
 
-    guardarCarrito(actualizado);
+    setCarrito(actualizado);
   }
 
   // ----- Función -----
   // Qué hace: saca un producto del carrito. filter devuelve un arreglo nuevo
   // sin ese producto.
   function eliminarDelCarrito(codigo) {
-    guardarCarrito(carrito.filter((item) => item.codigo !== codigo));
+    setCarrito(carrito.filter((item) => item.codigo !== codigo));
   }
 
   // ----- Función -----
-  // Qué hace: deja el carrito vacío, también en el navegador.
+  // Qué hace: deja el carrito vacío.
   function vaciarCarrito() {
-    guardarCarrito([]);
+    setCarrito([]);
   }
-
-  // Suma cuántas unidades hay en total para mostrarlas en el encabezado.
-  const unidades = carrito.reduce((total, item) => total + item.cantidad, 0);
 
   // ----- Función -----
   // Qué hace: decide cuál componente se muestra según el estado "seccion".
   // Lo que se escribe dentro de cada etiqueta son las props que recibe el hijo.
   function mostrarSeccion() {
     if (seccion === 'catalogo') {
-      return <Catalogo moneda={moneda} agregarAlCarrito={agregarAlCarrito} />;
+      return (
+        <Catalogo
+          moneda={moneda}
+          agregarAlCarrito={agregarAlCarrito}
+          unidades={unidades}
+        />
+      );
+    }
+
+    if (seccion === 'novedades') {
+      return (
+        <Novedades
+          moneda={moneda}
+          agregarAlCarrito={agregarAlCarrito}
+          unidades={unidades}
+        />
+      );
     }
 
     if (seccion === 'carrito') {

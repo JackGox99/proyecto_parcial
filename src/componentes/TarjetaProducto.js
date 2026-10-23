@@ -1,12 +1,31 @@
 import { formatearPrecio } from '../datos/tasasCambio';
+import { rutaImagen } from '../datos/productos';
 
 // ----- Componente -----
-// Qué hace: dibuja un solo producto del catálogo. Recibe el objeto completo
-// por props y no guarda estado propio, por eso se puede reutilizar.
+// Qué hace: dibuja un solo producto. Lo usan el catálogo propio y la sección
+// de novedades que viene del servidor, porque ambos le pasan un producto con
+// la misma forma. Recibe todo por props y no guarda estado propio.
 function TarjetaProducto({ producto, moneda, agregarAlCarrito }) {
+  // ----- Función Drag and Drop -----
+  // Qué hace: se dispara al empezar a arrastrar la tarjeta. Guarda el producto
+  // convertido a texto, porque dataTransfer solo transporta cadenas.
+  function iniciarArrastre(evento) {
+    evento.dataTransfer.setData('producto', JSON.stringify(producto));
+  }
+
   return (
-    <article>
+    <article draggable={producto.disponible} onDragStart={iniciarArrastre}>
       <h4>{producto.nombre}</h4>
+
+      {/* ----- Imágenes ----- */}
+      <p>
+        <img
+          src={rutaImagen(producto)}
+          alt={producto.nombre}
+          width="220"
+          height="150"
+        />
+      </p>
 
       <p>{producto.descripcion}</p>
 
@@ -45,6 +64,7 @@ function TarjetaProducto({ producto, moneda, agregarAlCarrito }) {
         >
           {producto.disponible ? 'Agregar al carrito' : 'Producto agotado'}
         </button>
+        {producto.disponible && <small> o arrastra la tarjeta al carrito</small>}
       </p>
 
       <hr />

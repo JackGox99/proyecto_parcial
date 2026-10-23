@@ -10,6 +10,7 @@ function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, unidades }) {
   const enlaces = [
     { clave: 'inicio', texto: 'Inicio' },
     { clave: 'catalogo', texto: 'Catalogo' },
+    { clave: 'novedades', texto: 'Novedades en linea' },
     { clave: 'carrito', texto: `Carrito (${unidades})` },
     { clave: 'contacto', texto: 'Contacto' },
   ];

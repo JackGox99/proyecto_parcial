@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { PRODUCTOS, CATEGORIAS } from '../datos/productos';
 import TarjetaProducto from './TarjetaProducto';
+import ZonaCarrito from './ZonaCarrito';
 
 // ----- Componente -----
 // Qué hace: muestra el listado de productos con buscador, filtro por
 // categoría, ordenamiento y filtro de disponibilidad.
-function Catalogo({ moneda, agregarAlCarrito }) {
+function Catalogo({ moneda, agregarAlCarrito, unidades }) {
   // ----- Función useState -----
   // Qué hace: guarda lo que el usuario escribió o eligió en cada control.
   // Hay una variable de estado por control y son independientes entre sí.
@@ -52,6 +53,10 @@ function Catalogo({ moneda, agregarAlCarrito }) {
   return (
     <main>
       <h2>Catalogo de productos</h2>
+
+      {/* ----- Función Drag and Drop ----- */}
+      {/* Qué hace: zona que recibe las tarjetas arrastradas. */}
+      <ZonaCarrito agregarAlCarrito={agregarAlCarrito} unidades={unidades} />
 
       <fieldset>
         <legend>Filtros de busqueda</legend>

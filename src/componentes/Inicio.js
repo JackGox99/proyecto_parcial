@@ -1,4 +1,4 @@
-import { PRODUCTOS } from '../datos/productos';
+import { PRODUCTOS, rutaImagen } from '../datos/productos';
 import { formatearPrecio } from '../datos/tasasCambio';
 
 // ----- Componente -----
@@ -66,6 +66,7 @@ function Inicio({ moneda, cambiarSeccion, agregarAlCarrito }) {
       <table border="1">
         <thead>
           <tr>
+            <th>Imagen</th>
             <th>Producto</th>
             <th>Categoria</th>
             <th>Precio</th>
@@ -75,6 +76,15 @@ function Inicio({ moneda, cambiarSeccion, agregarAlCarrito }) {
         <tbody>
           {destacados.map((producto) => (
             <tr key={producto.codigo}>
+              <td>
+                {/* ----- Imágenes ----- */}
+                <img
+                  src={rutaImagen(producto)}
+                  alt={producto.nombre}
+                  width="140"
+                  height="96"
+                />
+              </td>
               <td>{producto.nombre}</td>
               <td>{producto.categoria}</td>
               <td>{formatearPrecio(producto.precio, moneda)}</td>
