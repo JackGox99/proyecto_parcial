@@ -4,11 +4,14 @@ import Inicio from './componentes/Inicio';
 import Catalogo from './componentes/Catalogo';
 import Novedades from './componentes/Novedades';
 import Carrito from './componentes/Carrito';
+import Pedidos from './componentes/Pedidos';
 import Contacto from './componentes/Contacto';
 import PiePagina from './componentes/PiePagina';
 
-// Nombre con el que queda guardado el carrito dentro del navegador.
+// Nombres con los que quedan guardados el carrito y el historial de compras
+// dentro del navegador.
 const LLAVE_CARRITO = 'tecnostore-carrito';
+const LLAVE_PEDIDOS = 'tecnostore-pedidos';
 
 // ----- Componente -----
 // Qué hace: es el componente raíz. Contiene a todos los demás y guarda el
@@ -19,6 +22,7 @@ function App() {
   // y la moneda en la que se muestran los precios.
   const [seccion, setSeccion] = useState('inicio');
   const [carrito, setCarrito] = useState([]);
+  const [pedidos, setPedidos] = useState([]);
   const [moneda, setMoneda] = useState('COP');
 
   // ----- Hook de efecto useEffect -----
@@ -42,6 +46,26 @@ function App() {
   useEffect(() => {
     localStorage.setItem(LLAVE_CARRITO, JSON.stringify(carrito));
   }, [carrito]);
+
+  // ----- Hook de efecto useEffect -----
+  // Qué hace: lee el historial de compras guardado, una sola vez al abrir.
+  useEffect(() => {
+    try {
+      const guardados = JSON.parse(localStorage.getItem(LLAVE_PEDIDOS));
+
+      if (guardados) {
+        setPedidos(guardados);
+      }
+    } catch (error) {
+      // Si lo guardado quedo dañado, se arranca sin historial.
+    }
+  }, []);
+
+  // ----- Hook de efecto useEffect -----
+  // Qué hace: guarda el historial cada vez que se registra o se borra un pedido.
+  useEffect(() => {
+    localStorage.setItem(LLAVE_PEDIDOS, JSON.stringify(pedidos));
+  }, [pedidos]);
 
   // Suma cuántas unidades hay en total para mostrarlas en el encabezado.
   const unidades = carrito.reduce((total, item) => total + item.cantidad, 0);
@@ -115,6 +139,19 @@ function App() {
   }
 
   // ----- Función -----
+  // Qué hace: guarda una compra confirmada en el historial. El pedido nuevo
+  // va de primero, para que el mas reciente se vea arriba.
+  function registrarPedido(pedido) {
+    setPedidos([pedido, ...pedidos]);
+  }
+
+  // ----- Función -----
+  // Qué hace: borra todo el historial de compras.
+  function borrarPedidos() {
+    setPedidos([]);
+  }
+
+  // ----- Función -----
   // Qué hace: decide cuál componente se muestra según el estado "seccion".
   // Lo que se escribe dentro de cada etiqueta son las props que recibe el hijo.
   function mostrarSeccion() {
@@ -147,6 +184,18 @@ function App() {
           eliminarDelCarrito={eliminarDelCarrito}
           vaciarCarrito={vaciarCarrito}
           cambiarSeccion={cambiarSeccion}
+          registrarPedido={registrarPedido}
+        />
+      );
+    }
+
+    if (seccion === 'pedidos') {
+      return (
+        <Pedidos
+          pedidos={pedidos}
+          moneda={moneda}
+          borrarPedidos={borrarPedidos}
+          cambiarSeccion={cambiarSeccion}
         />
       );
     }
@@ -172,6 +221,7 @@ function App() {
         moneda={moneda}
         setMoneda={setMoneda}
         unidades={unidades}
+        pedidosHechos={pedidos.length}
       />
 
       {mostrarSeccion()}

@@ -9,7 +9,7 @@ const MINIMO_ENVIO_GRATIS = 1000000;
 // ----- Componente -----
 // Qué hace: muestra el resumen del carrito, calcula los totales y cierra la
 // compra.
-function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarCarrito, cambiarSeccion }) {
+function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarCarrito, cambiarSeccion, registrarPedido }) {
   // ----- Función useState -----
   // Qué hace: guarda el pedido ya confirmado. Mientras vale null se muestra
   // el carrito; cuando tiene datos se muestra el comprobante de compra.
@@ -29,14 +29,21 @@ function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarC
 
   const total = subtotal + envio;
 
-  // Se guarda el pedido confirmado y se vacia el carrito.
+  // ----- Función -----
+  // Qué hace: arma el pedido, lo muestra como comprobante, lo manda al
+  // historial que vive en App y deja el carrito vacio.
   function confirmarCompra(datosCliente) {
-    setPedido({
+    const nuevo = {
       cliente: datosCliente,
       productos: carrito,
       total,
       numero: Math.trunc(Math.random() * 900000) + 100000,
-    });
+      // Se guarda en formato ISO porque es el que entiende JSON.
+      fecha: new Date().toISOString(),
+    };
+
+    setPedido(nuevo);
+    registrarPedido(nuevo);
     vaciarCarrito();
   }
 
@@ -79,6 +86,20 @@ function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarC
           <button type="button" onClick={volverAComprar}>
             Seguir comprando
           </button>
+        </p>
+
+        <p>
+          {/* ----- Enlaces ----- */}
+          {/* Qué hace: lleva al historial, donde este pedido ya quedo guardado. */}
+          <a
+            href="#pedidos"
+            onClick={(evento) => {
+              evento.preventDefault();
+              cambiarSeccion('pedidos');
+            }}
+          >
+            Ver todos mis pedidos
+          </a>
         </p>
       </main>
     );

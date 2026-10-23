@@ -32,14 +32,16 @@ src/
   datos/
     productos.js                  catalogo (arreglo de objetos) y rutaImagen()
     tasasCambio.js                tasas de cambio y formateo de precios
+    fechas.js                     formateo de fechas en español
   componentes/
     Encabezado.js                 navegacion y selector de moneda
     Inicio.js                     pagina principal
     Catalogo.js                   listado propio con buscador y filtros
-    Novedades.js                  catalogo pedido a un servidor web con fetch
+    Novedades.js                  catalogo del servidor, con copia para sin conexion
     TarjetaProducto.js            dibuja un producto, propio o del servidor
     ZonaCarrito.js                zona donde se sueltan los productos (drag and drop)
     Carrito.js                    resumen, totales y confirmacion
+    Pedidos.js                    historial de compras
     FormularioCompra.js           datos de envio y pago con validaciones
     Contacto.js                   formulario de contacto
     PiePagina.js                  enlaces internos y externos
@@ -56,14 +58,48 @@ rotulos en orden.
 | 3 | Componentes y comunicacion entre ellos | carpeta `componentes/`. El padre baja datos por props y el hijo avisa llamando funciones del padre |
 | 4 | Eventos generados por un componente | `onClick`, `onChange`, `onSubmit`, `onDragStart`, `onDragOver`, `onDrop` |
 | 5 | Hook useState | `App.js`, `Catalogo.js`, `Novedades.js`, `ZonaCarrito.js` y los formularios |
-| 6 | Hook de efecto useEffect | tres en `App.js` (cargar carrito, guardar carrito, titulo de la pestana) y uno en `Novedades.js` (pedir al servidor) |
+| 6 | Hook de efecto useEffect | seis en total. Cinco en `App.js` (cargar y guardar el carrito, cargar y guardar los pedidos, titulo de la pestana) y uno en `Novedades.js` (pedir al servidor), este ultimo con funcion de limpieza |
 | 7 | Peticiones a un servidor web con fetch | `Novedades.js`, contra `https://dummyjson.com` |
 | 8 | Propiedad key en listas | en cada `map` que genera elementos |
 | 9 | Imagenes | `rutaImagen()` en `datos/productos.js`. Hay imagenes locales en `public/imagenes/` y remotas que llegan del servidor |
 | 10 | Filtros | `Catalogo.js`: busqueda por texto, categoria, orden y disponibilidad, los cuatro combinables |
 | 11 | Subir a un hosting | ver la seccion de abajo |
 | 12 | Drag and drop | `TarjetaProducto.js` inicia el arrastre y `ZonaCarrito.js` lo recibe |
-| 13 | Almacenamiento en LocalStorage | `App.js`, los dos `useEffect` del carrito |
+| 13 | Almacenamiento en LocalStorage | tres cosas guardadas: el carrito y el historial de pedidos en `App.js`, y la copia del catalogo del servidor en `Novedades.js` |
+
+## Valor agregado
+
+Ninguno de estos cuatro aparece en la lista de requisitos.
+
+- **El catalogo del servidor funciona sin internet.** De cada respuesta buena
+  se guarda una copia en el navegador. Si el servidor falla, en vez del error
+  se muestran esos productos con la fecha en que se descargaron. Esta en
+  `Novedades.js`, en `leerCopia()` y `guardarCopia()`.
+- **Historial de pedidos.** Cada compra confirmada queda guardada con su
+  numero, fecha, productos y total. La seccion "Mis pedidos" los lista, del mas
+  reciente al mas viejo, y tambien sobrevive al cierre de la pestaña.
+- **Precios en cinco monedas.** Los precios se guardan en pesos colombianos y
+  se convierten al mostrarlos. La tabla de tasas es la del ejercicio de cambio
+  de moneda que hicimos en clase en TypeScript. El selector del encabezado
+  afecta toda la tienda, incluidos los productos del servidor.
+- **Carrito real.** Agrupa productos repetidos, permite cambiar cantidades,
+  calcula subtotal, aplica envio gratis por monto y genera numero de pedido.
+
+### Como demostrar el catalogo sin internet
+
+Dentro de Novedades hay un recuadro "Modo de demostracion" con dos controles,
+para no tener que apagar el wifi en plena sustentacion.
+
+1. Entrar a Novedades con internet. Arriba dice "Datos recien traidos del
+   servidor". En ese momento se guardo la copia.
+2. Marcar la casilla "Simular que no hay internet". La lista sigue ahi, pero
+   ahora avisa que es la copia guardada y dice de cuando es.
+3. Con la casilla todavia marcada, presionar "Borrar las copias guardadas".
+   Ahora si aparece el error, porque no hay red ni copia.
+4. Desmarcar la casilla. Vuelve a pedirle al servidor y se guarda otra copia.
+
+Si el internet se cae de verdad, el recorrido es el mismo. La diferencia es que
+lo dispara el fallo real en lugar de la casilla.
 
 ## Lo que se puede mostrar funcionando
 

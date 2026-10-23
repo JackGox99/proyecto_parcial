@@ -3,7 +3,7 @@ import { TASAS_CAMBIO } from '../datos/tasasCambio';
 // ----- Componente -----
 // Qué hace: dibuja la barra superior con la navegación y el selector de
 // moneda. Recibe por props el estado que vive en App.
-function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, unidades }) {
+function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, unidades, pedidosHechos }) {
   // ----- Objetos -----
   // Qué hace: arreglo de objetos con los enlaces del menú. Cada objeto tiene
   // la clave de la sección y el texto que se muestra.
@@ -12,6 +12,7 @@ function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, unidades }) {
     { clave: 'catalogo', texto: 'Catalogo' },
     { clave: 'novedades', texto: 'Novedades en linea' },
     { clave: 'carrito', texto: `Carrito (${unidades})` },
+    { clave: 'pedidos', texto: `Mis pedidos (${pedidosHechos})` },
     { clave: 'contacto', texto: 'Contacto' },
   ];
 
