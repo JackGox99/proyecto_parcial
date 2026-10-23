@@ -13,6 +13,17 @@ import PiePagina from './componentes/PiePagina';
 const LLAVE_CARRITO = 'tecnostore-carrito';
 const LLAVE_PEDIDOS = 'tecnostore-pedidos';
 
+// ----- Función -----
+// Qué hace: lee un arreglo guardado en el navegador. Si no existe o quedo
+// dañado, devuelve un arreglo vacío.
+function leerGuardado(llave) {
+  try {
+    return JSON.parse(localStorage.getItem(llave)) || [];
+  } catch (error) {
+    return [];
+  }
+}
+
 // ----- Componente -----
 // Qué hace: es el componente raíz. Contiene a todos los demás y guarda el
 // estado que varias pantallas necesitan compartir.
@@ -21,24 +32,13 @@ function App() {
   // Qué hace: guarda la sección que se está viendo, los productos del carrito
   // y la moneda en la que se muestran los precios.
   const [seccion, setSeccion] = useState('inicio');
-  const [carrito, setCarrito] = useState([]);
-  const [pedidos, setPedidos] = useState([]);
+  // El carrito y los pedidos arrancan con lo guardado en el navegador. Se pasa
+  // una función a useState para que la lectura ocurra antes del primer
+  // render; si se leyera en un useEffect, el efecto de guardado alcanzaría a
+  // escribir el arreglo vacío encima y se perdería el carrito al recargar.
+  const [carrito, setCarrito] = useState(() => leerGuardado(LLAVE_CARRITO));
+  const [pedidos, setPedidos] = useState(() => leerGuardado(LLAVE_PEDIDOS));
   const [moneda, setMoneda] = useState('COP');
-
-  // ----- Hook de efecto useEffect -----
-  // Qué hace: lee el carrito guardado en el navegador. El arreglo vacío del
-  // final significa "ejecútate una sola vez", al abrir la página.
-  useEffect(() => {
-    try {
-      const guardado = JSON.parse(localStorage.getItem(LLAVE_CARRITO));
-
-      if (guardado) {
-        setCarrito(guardado);
-      }
-    } catch (error) {
-      // Si lo guardado quedo dañado, se arranca con el carrito vacio.
-    }
-  }, []);
 
   // ----- Hook de efecto useEffect -----
   // Qué hace: guarda el carrito en el navegador. El [carrito] del final
@@ -46,20 +46,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem(LLAVE_CARRITO, JSON.stringify(carrito));
   }, [carrito]);
-
-  // ----- Hook de efecto useEffect -----
-  // Qué hace: lee el historial de compras guardado, una sola vez al abrir.
-  useEffect(() => {
-    try {
-      const guardados = JSON.parse(localStorage.getItem(LLAVE_PEDIDOS));
-
-      if (guardados) {
-        setPedidos(guardados);
-      }
-    } catch (error) {
-      // Si lo guardado quedo dañado, se arranca sin historial.
-    }
-  }, []);
 
   // ----- Hook de efecto useEffect -----
   // Qué hace: guarda el historial cada vez que se registra o se borra un pedido.
