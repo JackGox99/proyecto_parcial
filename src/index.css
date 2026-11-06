@@ -1,0 +1,90 @@
+/* Ajustes propios encima de Bootstrap. Lo demás lo resuelven las clases y
+   los componentes de react-bootstrap. */
+
+body {
+  background-color: #f4f6f9;
+}
+
+/* Portada de la página de inicio. */
+.portada {
+  background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+}
+
+/* Las imágenes de los productos tienen tamaños distintos: se les da la misma
+   altura y se ajustan sin deformarse. */
+.imagen-producto {
+  height: 180px;
+  object-fit: contain;
+  padding: 1rem;
+  background-color: #fff;
+}
+
+.imagen-tabla {
+  object-fit: contain;
+  background-color: #fff;
+}
+
+/* En celular la imagen de los destacados se encoge para que quepan el
+   nombre y el botón en la misma fila. */
+@media (max-width: 575.98px) {
+  .imagen-destacado {
+    width: 72px;
+    height: 50px;
+  }
+}
+/* Tarjeta de producto: se levanta un poco al pasar el mouse. */
+.tarjeta-producto {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tarjeta-producto:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Si la tarjeta se puede arrastrar, el cursor lo indica. */
+.tarjeta-producto[draggable='true'] {
+  cursor: grab;
+}
+
+/* Zona donde se sueltan las tarjetas arrastradas. */
+.zona-carrito {
+  border: 2px dashed #adb5bd;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.zona-carrito.encima {
+  border-color: #198754;
+  background-color: #d1e7dd;
+}
+
+/* Enlaces del menú superior. En pantallas anchas van entre el carrito y la
+   moneda; en las angostas bajan a su propio renglón y se deslizan de lado. */
+.menu-secciones {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+@media (max-width: 991.98px) {
+  .menu-secciones {
+    order: 3;
+    width: 100%;
+  }
+}
+
+/* Ícono del carrito: se agranda y se pone verde con una tarjeta encima. */
+.boton-carrito {
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.boton-carrito.encima {
+  transform: scale(1.2);
+  background-color: #198754;
+  border-color: #198754;
+}
+
+/* Lista de especificaciones dentro de la tarjeta. */
+.tarjeta-producto details summary {
+  cursor: pointer;
+}

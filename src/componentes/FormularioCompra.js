@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Card, Form, Row, Col, Button } from 'react-bootstrap';
 
 const CIUDADES = ['Bogota', 'Medellin', 'Cali', 'Barranquilla', 'Neiva'];
 
@@ -98,120 +99,125 @@ function FormularioCompra({ totalTexto, confirmarCompra }) {
   }
 
   return (
-    <section>
-      <h3>Datos de envio y pago</h3>
-      <p>Total a pagar: {totalTexto}</p>
-
-      {/* ----- Formulario ----- */}
-      {/* Qué hace: recoge los datos de envío y pago. Cada campo toma su valor
-          del estado y lo actualiza con onChange: son campos controlados. */}
-      <form onSubmit={manejarEnvio}>
+    <Card as="section" className="shadow-sm border-0">
+      <Card.Header as="h3" className="fs-5">Datos de envio y pago</Card.Header>
+      <Card.Body>
         <p>
-          <label htmlFor="nombre">Nombre completo: </label>
-          <input
-            id="nombre"
-            type="text"
-            name="nombre"
-            value={datos.nombre}
-            onChange={manejarCambio}
-          />
-          {/* Muestra el mensaje solo si ese campo tiene error. */}
-          {errores.nombre && <strong> {errores.nombre}</strong>}
+          Total a pagar: <strong className="text-primary">{totalTexto}</strong>
         </p>
 
-        <p>
-          <label htmlFor="email">Correo electronico: </label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            value={datos.email}
-            onChange={manejarCambio}
-          />
-          {errores.email && <strong> {errores.email}</strong>}
-        </p>
-
-        <p>
-          <label htmlFor="telefono">Telefono: </label>
-          <input
-            id="telefono"
-            type="text"
-            name="telefono"
-            maxLength={10}
-            value={datos.telefono}
-            onChange={manejarCambio}
-          />
-          {errores.telefono && <strong> {errores.telefono}</strong>}
-        </p>
-
-        <p>
-          <label htmlFor="direccion">Direccion de entrega: </label>
-          <input
-            id="direccion"
-            type="text"
-            name="direccion"
-            value={datos.direccion}
-            onChange={manejarCambio}
-          />
-          {errores.direccion && <strong> {errores.direccion}</strong>}
-        </p>
-
-        <p>
-          <label htmlFor="ciudad">Ciudad: </label>
-          <select
-            id="ciudad"
-            name="ciudad"
-            value={datos.ciudad}
-            onChange={manejarCambio}
-          >
-            <option value="">Selecciona una ciudad</option>
-            {CIUDADES.map((nombre) => (
-              <option key={nombre} value={nombre}>
-                {nombre}
-              </option>
-            ))}
-          </select>
-          {errores.ciudad && <strong> {errores.ciudad}</strong>}
-        </p>
-
-        <fieldset>
-          <legend>Metodo de pago</legend>
-          {/* Qué hace: genera un radio button por cada método recorriendo el
-              objeto METODOS_PAGO con Object.entries. */}
-          {Object.entries(METODOS_PAGO).map(([clave, texto]) => (
-            <p key={clave}>
-              <label>
-                <input
-                  type="radio"
-                  name="metodoPago"
-                  value={clave}
-                  checked={datos.metodoPago === clave}
-                  onChange={manejarCambio}
-                />
-                {texto}
-              </label>
-            </p>
-          ))}
-        </fieldset>
-
-        <p>
-          <label>
-            <input
-              type="checkbox"
-              name="aceptaTerminos"
-              checked={datos.aceptaTerminos}
+        {/* ----- Formulario ----- */}
+        {/* Qué hace: recoge los datos de envío y pago. Cada campo toma su valor
+            del estado y lo actualiza con onChange: son campos controlados.
+            isInvalid pinta el campo en rojo cuando tiene error, y
+            Form.Control.Feedback muestra el mensaje debajo. */}
+        <Form onSubmit={manejarEnvio}>
+          <Form.Group className="mb-3" controlId="nombre">
+            <Form.Label>Nombre completo</Form.Label>
+            <Form.Control
+              type="text"
+              name="nombre"
+              value={datos.nombre}
               onChange={manejarCambio}
+              isInvalid={!!errores.nombre}
             />
-            Acepto los terminos y condiciones de TecnoStore.
-          </label>
-          {errores.aceptaTerminos && <strong> {errores.aceptaTerminos}</strong>}
-        </p>
+            <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
+          </Form.Group>
 
-        <p>
-          <button type="submit">Confirmar compra</button>
-        </p>
-      </form>
-    </section>
+          <Form.Group className="mb-3" controlId="email">
+            <Form.Label>Correo electronico</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={datos.email}
+              onChange={manejarCambio}
+              isInvalid={!!errores.email}
+            />
+            <Form.Control.Feedback type="invalid">{errores.email}</Form.Control.Feedback>
+          </Form.Group>
+
+          <Row>
+            <Form.Group as={Col} sm={6} className="mb-3" controlId="telefono">
+              <Form.Label>Telefono</Form.Label>
+              <Form.Control
+                type="text"
+                name="telefono"
+                maxLength={10}
+                value={datos.telefono}
+                onChange={manejarCambio}
+                isInvalid={!!errores.telefono}
+              />
+              <Form.Control.Feedback type="invalid">{errores.telefono}</Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group as={Col} sm={6} className="mb-3" controlId="ciudad">
+              <Form.Label>Ciudad</Form.Label>
+              <Form.Select
+                name="ciudad"
+                value={datos.ciudad}
+                onChange={manejarCambio}
+                isInvalid={!!errores.ciudad}
+              >
+                <option value="">Selecciona una ciudad</option>
+                {CIUDADES.map((nombre) => (
+                  <option key={nombre} value={nombre}>
+                    {nombre}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">{errores.ciudad}</Form.Control.Feedback>
+            </Form.Group>
+          </Row>
+
+          <Form.Group className="mb-3" controlId="direccion">
+            <Form.Label>Direccion de entrega</Form.Label>
+            <Form.Control
+              type="text"
+              name="direccion"
+              value={datos.direccion}
+              onChange={manejarCambio}
+              isInvalid={!!errores.direccion}
+            />
+            <Form.Control.Feedback type="invalid">{errores.direccion}</Form.Control.Feedback>
+          </Form.Group>
+
+          <fieldset className="mb-3">
+            <legend className="fs-6">Metodo de pago</legend>
+            {/* Qué hace: genera un radio button por cada método recorriendo el
+                objeto METODOS_PAGO con Object.entries. */}
+            {Object.entries(METODOS_PAGO).map(([clave, texto]) => (
+              <Form.Check
+                key={clave}
+                id={`pago-${clave}`}
+                type="radio"
+                name="metodoPago"
+                value={clave}
+                label={texto}
+                checked={datos.metodoPago === clave}
+                onChange={manejarCambio}
+              />
+            ))}
+          </fieldset>
+
+          <Form.Check
+            className="mb-3"
+            id="aceptaTerminos"
+            type="checkbox"
+            name="aceptaTerminos"
+            label="Acepto los terminos y condiciones de TecnoStore."
+            checked={datos.aceptaTerminos}
+            onChange={manejarCambio}
+            isInvalid={!!errores.aceptaTerminos}
+            feedback={errores.aceptaTerminos}
+            feedbackType="invalid"
+          />
+
+          <Button type="submit" variant="success" size="lg" className="w-100">
+            Confirmar compra
+          </Button>
+        </Form>
+      </Card.Body>
+    </Card>
   );
 }
 

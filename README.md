@@ -1,8 +1,8 @@
 # TecnoStore
 
 E-commerce de tecnologia desarrollado en React para la asignatura Desarrollo en
-Plataformas. No usa hojas de estilo ni librerias externas: todo lo que se ve es
-HTML generado por los componentes.
+Plataformas. La interfaz usa React Bootstrap (componentes de Bootstrap 5 hechos
+para React) y una hoja propia, `src/index.css`, con algunos ajustes encima.
 
 ## Como ejecutarlo
 
@@ -25,16 +25,18 @@ formulario, que es justamente lo que vimos en clase.
 
 ```
 public/
-  imagenes/                       las 8 imagenes de los productos propios
+  imagenes/                       las 8 imagenes de los productos y el logo TS
 src/
   index.js                        punto de entrada
+  index.css                       ajustes de estilo propios encima de Bootstrap
   App.js                          componente raiz, estado compartido y efectos
   datos/
     productos.js                  catalogo (arreglo de objetos) y rutaImagen()
     tasasCambio.js                tasas de cambio y formateo de precios
     fechas.js                     formateo de fechas en español
   componentes/
-    Encabezado.js                 navegacion y selector de moneda
+    Encabezado.js                 navegacion, selector de moneda y logo
+    BotonCarrito.js               icono del carrito, vista rapida y zona para soltar
     Inicio.js                     pagina principal
     Catalogo.js                   listado propio con buscador y filtros
     Novedades.js                  catalogo del servidor, con copia para sin conexion

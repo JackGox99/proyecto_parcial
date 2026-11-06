@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { PRODUCTOS, CATEGORIAS } from '../datos/productos';
 import TarjetaProducto from './TarjetaProducto';
 import ZonaCarrito from './ZonaCarrito';
@@ -51,106 +52,114 @@ function Catalogo({ moneda, agregarAlCarrito, unidades }) {
   }
 
   return (
-    <main>
-      <h2>Catalogo de productos</h2>
+    <Container as="main" className="py-4">
+      <h2 className="mb-4">Catalogo de productos</h2>
 
       {/* ----- Función Drag and Drop ----- */}
       {/* Qué hace: zona que recibe las tarjetas arrastradas. */}
       <ZonaCarrito agregarAlCarrito={agregarAlCarrito} unidades={unidades} />
 
-      <fieldset>
-        <legend>Filtros de busqueda</legend>
+      <Card className="mb-4 shadow-sm border-0">
+        <Card.Header as="h3" className="fs-6 fw-semibold">Filtros de busqueda</Card.Header>
+        <Card.Body>
+          {/* Row/Col reparten los controles: uno debajo del otro en celular y
+              en columnas en pantallas más grandes. */}
+          <Row className="g-3 align-items-end">
+            <Col md={6} lg={4}>
+              <Form.Label htmlFor="busqueda">Buscar por nombre o marca</Form.Label>
+              {/* ----- Evento ----- */}
+              {/* Qué hace: onChange se dispara con cada tecla y guarda el texto
+                  en el estado, lo que vuelve a filtrar la lista al instante. */}
+              <Form.Control
+                id="busqueda"
+                type="text"
+                placeholder="Ej: Lenovo, monitor..."
+                value={busqueda}
+                onChange={(evento) => setBusqueda(evento.target.value)}
+              />
+            </Col>
 
-        <p>
-          <label htmlFor="busqueda">Buscar por nombre o marca: </label>
-          {/* ----- Evento ----- */}
-          {/* Qué hace: onChange se dispara con cada tecla y guarda el texto
-              en el estado, lo que vuelve a filtrar la lista al instante. */}
-          <input
-            id="busqueda"
-            type="text"
-            value={busqueda}
-            onChange={(evento) => setBusqueda(evento.target.value)}
-          />
-        </p>
+            <Col md={6} lg={3}>
+              <Form.Label htmlFor="categoria">Categoria</Form.Label>
+              {/* ----- Evento ----- */}
+              {/* Qué hace: guarda la categoría elegida para filtrar por ella. */}
+              <Form.Select
+                id="categoria"
+                value={categoria}
+                onChange={(evento) => setCategoria(evento.target.value)}
+              >
+                <option value="">Todas las categorias</option>
+                {CATEGORIAS.map((nombre) => (
+                  <option key={nombre} value={nombre}>
+                    {nombre}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
 
-        <p>
-          <label htmlFor="categoria">Categoria: </label>
-          {/* ----- Evento ----- */}
-          {/* Qué hace: guarda la categoría elegida para filtrar por ella. */}
-          <select
-            id="categoria"
-            value={categoria}
-            onChange={(evento) => setCategoria(evento.target.value)}
-          >
-            <option value="">Todas las categorias</option>
-            {CATEGORIAS.map((nombre) => (
-              <option key={nombre} value={nombre}>
-                {nombre}
-              </option>
-            ))}
-          </select>
-        </p>
+            <Col md={6} lg={3}>
+              <Form.Label htmlFor="orden">Ordenar por</Form.Label>
+              {/* ----- Evento ----- */}
+              {/* Qué hace: guarda el criterio con el que se ordena la lista. */}
+              <Form.Select
+                id="orden"
+                value={orden}
+                onChange={(evento) => setOrden(evento.target.value)}
+              >
+                <option value="nombre">Nombre</option>
+                <option value="precioAsc">Precio de menor a mayor</option>
+                <option value="precioDesc">Precio de mayor a menor</option>
+              </Form.Select>
+            </Col>
 
-        <p>
-          <label htmlFor="orden">Ordenar por: </label>
-          {/* ----- Evento ----- */}
-          {/* Qué hace: guarda el criterio con el que se ordena la lista. */}
-          <select
-            id="orden"
-            value={orden}
-            onChange={(evento) => setOrden(evento.target.value)}
-          >
-            <option value="nombre">Nombre</option>
-            <option value="precioAsc">Precio de menor a mayor</option>
-            <option value="precioDesc">Precio de mayor a menor</option>
-          </select>
-        </p>
+            <Col md={6} lg={2}>
+              {/* ----- Evento ----- */}
+              {/* Qué hace: al hacer clic limpia los cuatro filtros. */}
+              <Button variant="outline-secondary" className="w-100" onClick={limpiarFiltros}>
+                Limpiar filtros
+              </Button>
+            </Col>
 
-        <p>
-          <label htmlFor="disponibles">
-            {/* ----- Evento ----- */}
-            {/* Qué hace: en una casilla se lee "checked", no "value". */}
-            <input
-              id="disponibles"
-              type="checkbox"
-              checked={soloDisponibles}
-              onChange={(evento) => setSoloDisponibles(evento.target.checked)}
-            />
-            Mostrar solo productos disponibles
-          </label>
-        </p>
+            <Col xs={12}>
+              {/* ----- Evento ----- */}
+              {/* Qué hace: en una casilla se lee "checked", no "value". */}
+              <Form.Check
+                id="disponibles"
+                type="switch"
+                label="Mostrar solo productos disponibles"
+                checked={soloDisponibles}
+                onChange={(evento) => setSoloDisponibles(evento.target.checked)}
+              />
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
 
-        <p>
-          {/* ----- Evento ----- */}
-          {/* Qué hace: al hacer clic limpia los cuatro filtros. */}
-          <button type="button" onClick={limpiarFiltros}>
-            Limpiar filtros
-          </button>
-        </p>
-      </fieldset>
-
-      <p>
+      <p className="text-muted">
         Se encontraron {ordenados.length} de {PRODUCTOS.length} productos.
       </p>
 
-      <hr />
-
       {/* Qué hace: si no hay resultados muestra un aviso, y si los hay pinta
-          un componente TarjetaProducto por cada producto. */}
+          un componente TarjetaProducto por cada producto, dentro de una
+          grilla de 1, 2 o 3 columnas según el ancho de la pantalla. */}
       {ordenados.length === 0 ? (
-        <p>No hay productos que coincidan con la busqueda. Intenta con otro filtro.</p>
+        <Alert variant="warning">
+          No hay productos que coincidan con la busqueda. Intenta con otro filtro.
+        </Alert>
       ) : (
-        ordenados.map((producto) => (
-          <TarjetaProducto
-            key={producto.codigo}
-            producto={producto}
-            moneda={moneda}
-            agregarAlCarrito={agregarAlCarrito}
-          />
-        ))
+        <Row xs={1} sm={2} lg={3} className="g-4">
+          {ordenados.map((producto) => (
+            <Col key={producto.codigo}>
+              <TarjetaProducto
+                producto={producto}
+                moneda={moneda}
+                agregarAlCarrito={agregarAlCarrito}
+              />
+            </Col>
+          ))}
+        </Row>
       )}
-    </main>
+    </Container>
   );
 }
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Container, Row, Col, Card, Form, Button, Alert, ListGroup } from 'react-bootstrap';
 import { formatearPrecio } from '../datos/tasasCambio';
 import { rutaImagen } from '../datos/productos';
 import FormularioCompra from './FormularioCompra';
@@ -55,64 +56,77 @@ function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarC
   // Vista de confirmacion despues de una compra exitosa.
   if (pedido) {
     return (
-      <main>
-        <h2>Compra confirmada</h2>
+      <Container as="main" className="py-4">
+        <Row className="justify-content-center">
+          <Col lg={8}>
+            <Alert variant="success">
+              <Alert.Heading>Compra confirmada</Alert.Heading>
+              <p className="mb-0">
+                Gracias por tu compra, {pedido.cliente.nombre}. Numero de pedido:{' '}
+                <strong>{pedido.numero}</strong>
+              </p>
+            </Alert>
 
-        <p>
-          <mark>Gracias por tu compra, {pedido.cliente.nombre}.</mark>
-        </p>
+            <Card className="shadow-sm border-0 mb-3">
+              <Card.Header as="h3" className="fs-5">Resumen del pedido</Card.Header>
+              <ListGroup variant="flush">
+                <ListGroup.Item>Correo de confirmacion: {pedido.cliente.email}</ListGroup.Item>
+                <ListGroup.Item>
+                  Entrega en: {pedido.cliente.direccion}, {pedido.cliente.ciudad}
+                </ListGroup.Item>
+                <ListGroup.Item>Telefono de contacto: {pedido.cliente.telefono}</ListGroup.Item>
+                <ListGroup.Item>Metodo de pago: {pedido.cliente.metodoPagoTexto}</ListGroup.Item>
+                <ListGroup.Item className="fw-bold">
+                  Total pagado: {formatearPrecio(pedido.total, moneda)}
+                </ListGroup.Item>
+              </ListGroup>
+            </Card>
 
-        <p>Numero de pedido: {pedido.numero}</p>
+            <Card className="shadow-sm border-0 mb-4">
+              <Card.Header as="h3" className="fs-5">Productos comprados</Card.Header>
+              <ListGroup variant="flush">
+                {pedido.productos.map((item) => (
+                  <ListGroup.Item key={item.codigo}>
+                    {item.cantidad} x {item.nombre}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Card>
 
-        <h3>Resumen del pedido</h3>
-        <ul>
-          <li>Correo de confirmacion: {pedido.cliente.email}</li>
-          <li>Entrega en: {pedido.cliente.direccion}, {pedido.cliente.ciudad}</li>
-          <li>Telefono de contacto: {pedido.cliente.telefono}</li>
-          <li>Metodo de pago: {pedido.cliente.metodoPagoTexto}</li>
-          <li>Total pagado: {formatearPrecio(pedido.total, moneda)}</li>
-        </ul>
+            <div className="d-flex flex-wrap gap-2">
+              <Button variant="primary" onClick={volverAComprar}>
+                Seguir comprando
+              </Button>
 
-        <h3>Productos comprados</h3>
-        <ul>
-          {pedido.productos.map((item) => (
-            <li key={item.codigo}>
-              {item.cantidad} x {item.nombre}
-            </li>
-          ))}
-        </ul>
-
-        <p>
-          <button type="button" onClick={volverAComprar}>
-            Seguir comprando
-          </button>
-        </p>
-
-        <p>
-          {/* ----- Enlaces ----- */}
-          {/* Qué hace: lleva al historial, donde este pedido ya quedo guardado. */}
-          <a
-            href="#pedidos"
-            onClick={(evento) => {
-              evento.preventDefault();
-              cambiarSeccion('pedidos');
-            }}
-          >
-            Ver todos mis pedidos
-          </a>
-        </p>
-      </main>
+              {/* ----- Enlaces ----- */}
+              {/* Qué hace: lleva al historial, donde este pedido ya quedo guardado. */}
+              <Button
+                variant="outline-primary"
+                href="#pedidos"
+                onClick={(evento) => {
+                  evento.preventDefault();
+                  cambiarSeccion('pedidos');
+                }}
+              >
+                Ver todos mis pedidos
+              </Button>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 
   // Carrito vacio.
   if (carrito.length === 0) {
     return (
-      <main>
+      <Container as="main" className="py-4">
         <h2>Tu carrito</h2>
-        <p>Todavia no has agregado productos.</p>
-        <p>
-          <a
+        <Alert variant="info" className="d-flex flex-wrap align-items-center gap-3">
+          <span>Todavia no has agregado productos.</span>
+          <Button
+            variant="primary"
+            size="sm"
             href="#catalogo"
             onClick={(evento) => {
               evento.preventDefault();
@@ -120,94 +134,104 @@ function Carrito({ carrito, moneda, cambiarCantidad, eliminarDelCarrito, vaciarC
             }}
           >
             Ir al catalogo
-          </a>
-        </p>
-      </main>
+          </Button>
+        </Alert>
+      </Container>
     );
   }
 
   return (
-    <main>
-      <h2>Tu carrito</h2>
+    <Container as="main" className="py-4">
+      <h2 className="mb-4">Tu carrito</h2>
 
-      <table border="1">
-        <thead>
-          <tr>
-            <th>Imagen</th>
-            <th>Producto</th>
-            <th>Precio unitario</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-            <th>Quitar</th>
-          </tr>
-        </thead>
-        <tbody>
-          {carrito.map((item) => (
-            <tr key={item.codigo}>
-              <td>
-                {/* ----- Imágenes ----- */}
-                <img
-                  src={rutaImagen(item)}
-                  alt={item.nombre}
-                  width="110"
-                  height="76"
-                />
-              </td>
-              <td>{item.nombre}</td>
-              <td>{formatearPrecio(item.precio, moneda)}</td>
-              <td>
-                <input
-                  type="number"
-                  min="1"
-                  max="10"
-                  value={item.cantidad}
-                  onChange={(evento) =>
-                    cambiarCantidad(item.codigo, evento.target.value)
-                  }
-                />
-              </td>
-              <td>{formatearPrecio(item.precio * item.cantidad, moneda)}</td>
-              <td>
-                <button type="button" onClick={() => eliminarDelCarrito(item.codigo)}>
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr>
-            <th colSpan="4">Subtotal</th>
-            <td colSpan="2">{formatearPrecio(subtotal, moneda)}</td>
-          </tr>
-          <tr>
-            <th colSpan="4">Envio</th>
-            <td colSpan="2">
-              {envio === 0 ? 'Gratis' : formatearPrecio(envio, moneda)}
-            </td>
-          </tr>
-          <tr>
-            <th colSpan="4">Total</th>
-            <td colSpan="2">
-              <strong>{formatearPrecio(total, moneda)}</strong>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+      <Row className="g-4">
+        {/* En pantallas grandes la lista y el formulario van lado a lado; en
+            las más pequeñas el formulario baja debajo de la lista. */}
+        <Col xl={7}>
+          <Card className="shadow-sm border-0">
+            {/* Cada producto es una fila de la grilla de Bootstrap en lugar de
+                una fila de tabla: en celular sus partes se acomodan en dos
+                renglones y en pantallas anchas quedan en uno solo. */}
+            <ListGroup variant="flush">
+              {carrito.map((item) => (
+                <ListGroup.Item key={item.codigo} className="py-3">
+                  <Row className="align-items-center g-2">
+                    <Col xs={4} sm={3} md={2}>
+                      {/* ----- Imágenes ----- */}
+                      <img
+                        src={rutaImagen(item)}
+                        alt={item.nombre}
+                        className="imagen-tabla rounded w-100"
+                        style={{ height: '64px' }}
+                      />
+                    </Col>
 
-      <p>
-        <button type="button" onClick={vaciarCarrito}>
-          Vaciar carrito
-        </button>
-      </p>
+                    <Col xs={8} sm={9} md={4}>
+                      <div className="fw-semibold">{item.nombre}</div>
+                      <small className="text-muted">
+                        {formatearPrecio(item.precio, moneda)} c/u
+                      </small>
+                    </Col>
 
-      <hr />
+                    <Col xs={4} md={2}>
+                      <Form.Control
+                        type="number"
+                        size="sm"
+                        min="1"
+                        max="10"
+                        aria-label={`Cantidad de ${item.nombre}`}
+                        value={item.cantidad}
+                        onChange={(evento) =>
+                          cambiarCantidad(item.codigo, evento.target.value)
+                        }
+                      />
+                    </Col>
 
-      <FormularioCompra
-        totalTexto={formatearPrecio(total, moneda)}
-        confirmarCompra={confirmarCompra}
-      />
-    </main>
+                    <Col xs={5} md={2} className="fw-semibold text-nowrap text-md-end small">
+                      {formatearPrecio(item.precio * item.cantidad, moneda)}
+                    </Col>
+
+                    <Col xs={3} md={2} className="text-end">
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => eliminarDelCarrito(item.codigo)}
+                      >
+                        Quitar
+                      </Button>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+              ))}
+
+              <ListGroup.Item className="d-flex justify-content-between">
+                <span>Subtotal</span>
+                <span>{formatearPrecio(subtotal, moneda)}</span>
+              </ListGroup.Item>
+              <ListGroup.Item className="d-flex justify-content-between">
+                <span>Envio</span>
+                <span>{envio === 0 ? 'Gratis' : formatearPrecio(envio, moneda)}</span>
+              </ListGroup.Item>
+              <ListGroup.Item variant="primary" className="d-flex justify-content-between fw-bold">
+                <span>Total</span>
+                <span>{formatearPrecio(total, moneda)}</span>
+              </ListGroup.Item>
+            </ListGroup>
+          </Card>
+
+          <Button variant="outline-secondary" className="mt-3" onClick={vaciarCarrito}>
+            Vaciar carrito
+          </Button>
+        </Col>
+
+        <Col xl={5}>
+          <FormularioCompra
+            totalTexto={formatearPrecio(total, moneda)}
+            confirmarCompra={confirmarCompra}
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

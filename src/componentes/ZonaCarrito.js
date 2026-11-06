@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import { Card, Badge } from 'react-bootstrap';
 
 // ----- Componente -----
 // Qué hace: es la zona donde se sueltan los productos arrastrados. Sigue el
 // mismo patrón de la Casilla del tablero de ajedrez que hicimos en clase.
 function ZonaCarrito({ agregarAlCarrito, unidades }) {
   // ----- Función useState -----
-  // Qué hace: recuerda si hay una tarjeta encima, para cambiar el mensaje.
-  // Como no usamos CSS, el aviso se da con el texto y no con el color.
+  // Qué hace: recuerda si hay una tarjeta encima, para cambiar el mensaje y
+  // agregar la clase "encima", que pinta la zona de verde.
   const [encima, setEncima] = useState(false);
   const [ultimo, setUltimo] = useState('');
 
@@ -45,19 +46,30 @@ function ZonaCarrito({ agregarAlCarrito, unidades }) {
   }
 
   return (
-    <fieldset onDragOver={permitirSoltar} onDragLeave={salirDeLaZona} onDrop={soltar}>
-      <legend>Carrito</legend>
+    <Card
+      className={`zona-carrito mb-4 ${encima ? 'encima' : ''}`}
+      onDragOver={permitirSoltar}
+      onDragLeave={salirDeLaZona}
+      onDrop={soltar}
+    >
+      <Card.Body className="text-center py-4">
+        <Card.Title>
+          Carrito <Badge bg="primary" pill>{unidades}</Badge>
+        </Card.Title>
 
-      <p>
-        {encima
-          ? 'Suelta aqui para agregarlo al carrito.'
-          : 'Arrastra cualquier tarjeta de producto hasta esta zona.'}
-      </p>
+        <Card.Text className="mb-0">
+          {encima
+            ? 'Suelta aqui para agregarlo al carrito.'
+            : 'Arrastra cualquier tarjeta de producto hasta esta zona.'}
+        </Card.Text>
 
-      <p>El carrito tiene {unidades} unidades.</p>
-
-      {ultimo !== '' && <p>Ultimo agregado arrastrando: {ultimo}</p>}
-    </fieldset>
+        {ultimo !== '' && (
+          <Card.Text className="small text-success mt-2 mb-0">
+            Ultimo agregado arrastrando: {ultimo}
+          </Card.Text>
+        )}
+      </Card.Body>
+    </Card>
   );
 }
 

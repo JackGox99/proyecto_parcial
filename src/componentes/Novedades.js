@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { TASAS_CAMBIO } from '../datos/tasasCambio';
 import { formatearFecha } from '../datos/fechas';
 import TarjetaProducto from './TarjetaProducto';
@@ -187,9 +188,9 @@ function Novedades({ moneda, agregarAlCarrito, unidades }) {
   }
 
   return (
-    <main>
+    <Container as="main" className="py-4">
       <h2>Novedades en linea</h2>
-      <p>
+      <p className="text-muted">
         Estos productos no estan en nuestro codigo. Se piden a un servidor web
         cada vez que cambias la categoria, y de cada respuesta buena se guarda
         una copia en el navegador.
@@ -197,96 +198,101 @@ function Novedades({ moneda, agregarAlCarrito, unidades }) {
 
       <ZonaCarrito agregarAlCarrito={agregarAlCarrito} unidades={unidades} />
 
-      <p>
-        <label htmlFor="categoriaServidor">Categoria del servidor: </label>
-        {/* ----- Evento ----- */}
-        {/* Qué hace: al cambiar la categoria, el useEffect de arriba se vuelve
-            a ejecutar y pide los productos nuevos. */}
-        <select
-          id="categoriaServidor"
-          value={categoria}
-          onChange={(evento) => setCategoria(evento.target.value)}
-        >
-          {Object.entries(CATEGORIAS_SERVIDOR).map(([clave, nombre]) => (
-            <option key={clave} value={clave}>
-              {nombre}
-            </option>
-          ))}
-        </select>
-      </p>
+      <Row className="g-3 mb-4">
+        <Col md={6}>
+          <Card className="h-100 shadow-sm border-0">
+            <Card.Body>
+              <Form.Label htmlFor="categoriaServidor">Categoria del servidor</Form.Label>
+              {/* ----- Evento ----- */}
+              {/* Qué hace: al cambiar la categoria, el useEffect de arriba se vuelve
+                  a ejecutar y pide los productos nuevos. */}
+              <Form.Select
+                id="categoriaServidor"
+                value={categoria}
+                onChange={(evento) => setCategoria(evento.target.value)}
+              >
+                {Object.entries(CATEGORIAS_SERVIDOR).map(([clave, nombre]) => (
+                  <option key={clave} value={clave}>
+                    {nombre}
+                  </option>
+                ))}
+              </Form.Select>
+            </Card.Body>
+          </Card>
+        </Col>
 
-      <fieldset>
-        <legend>Modo de demostracion</legend>
+        <Col md={6}>
+          <Card className="h-100 shadow-sm border-0">
+            <Card.Body>
+              <Card.Title as="h3" className="fs-6 fw-semibold">Modo de demostracion</Card.Title>
 
-        <p>
-          {/* ----- Evento ----- */}
-          {/* Qué hace: al marcar la casilla el efecto se vuelve a ejecutar,
-              se salta el fetch y lee la copia guardada. Sirve para mostrar el
-              funcionamiento sin internet sin tener que apagar el wifi. */}
-          <label htmlFor="sinConexion">
-            <input
-              id="sinConexion"
-              type="checkbox"
-              checked={sinConexion}
-              onChange={(evento) => setSinConexion(evento.target.checked)}
-            />
-            Simular que no hay internet
-          </label>
-        </p>
+              {/* ----- Evento ----- */}
+              {/* Qué hace: al marcar la casilla el efecto se vuelve a ejecutar,
+                  se salta el fetch y lee la copia guardada. Sirve para mostrar el
+                  funcionamiento sin internet sin tener que apagar el wifi. */}
+              <Form.Check
+                id="sinConexion"
+                type="switch"
+                label="Simular que no hay internet"
+                checked={sinConexion}
+                onChange={(evento) => setSinConexion(evento.target.checked)}
+                className="mb-2"
+              />
 
-        <p>
-          <button type="button" onClick={borrarCopias}>
-            Borrar las copias guardadas
-          </button>
-        </p>
-      </fieldset>
-
-      <hr />
+              <Button variant="outline-danger" size="sm" onClick={borrarCopias}>
+                Borrar las copias guardadas
+              </Button>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
       {/* Mientras se espera la respuesta del servidor. */}
-      {cargando && <p>Consultando el servidor...</p>}
+      {cargando && (
+        <div className="text-center py-5">
+          <Spinner animation="border" variant="primary" role="status" />
+          <p className="mt-2 text-muted">Consultando el servidor...</p>
+        </div>
+      )}
 
       {/* Si no hubo red y tampoco habia copia guardada. */}
       {!cargando && error !== '' && (
-        <div>
-          <p>
-            <strong>{error}</strong>
-          </p>
-          <p>
-            <button type="button" onClick={reintentar}>
-              Reintentar
-            </button>
-          </p>
-        </div>
+        <Alert variant="danger">
+          <p className="fw-bold">{error}</p>
+          <Button variant="outline-danger" onClick={reintentar}>
+            Reintentar
+          </Button>
+        </Alert>
       )}
 
       {/* Cuando hay productos, vengan del servidor o de la copia guardada. */}
       {!cargando && error === '' && (
         <div>
           {desdeCopia ? (
-            <p>
-              <mark>
-                Sin conexion con el servidor. Estas viendo la copia guardada el{' '}
-                {formatearFecha(fechaCopia)}.
-              </mark>
-            </p>
+            <Alert variant="warning">
+              Sin conexion con el servidor. Estas viendo la copia guardada el{' '}
+              {formatearFecha(fechaCopia)}.
+            </Alert>
           ) : (
-            <p>Datos recien traidos del servidor.</p>
+            <Alert variant="success">Datos recien traidos del servidor.</Alert>
           )}
 
-          <p>Se estan mostrando {productos.length} productos.</p>
+          <p className="text-muted">Se estan mostrando {productos.length} productos.</p>
 
-          {productos.map((producto) => (
-            <TarjetaProducto
-              key={producto.codigo}
-              producto={producto}
-              moneda={moneda}
-              agregarAlCarrito={agregarAlCarrito}
-            />
-          ))}
+          <Row xs={1} sm={2} lg={3} className="g-4">
+            {productos.map((producto) => (
+              <Col key={producto.codigo}>
+                <TarjetaProducto
+                  producto={producto}
+                  moneda={moneda}
+                  agregarAlCarrito={agregarAlCarrito}
+                />
+              </Col>
+            ))}
+          </Row>
         </div>
       )}
-    </main>
+    </Container>
   );
 }
 

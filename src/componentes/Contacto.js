@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Container, Row, Col, Card, Form, Button, Alert, ListGroup } from 'react-bootstrap';
 
 const MAX_CARACTERES = 300;
 
@@ -85,94 +86,106 @@ function Contacto() {
   }
 
   return (
-    <main>
+    <Container as="main" className="py-4">
       <h2>Contactanos</h2>
-      <p>Respondemos de lunes a viernes, de 8:00 a.m. a 6:00 p.m.</p>
+      <p className="text-muted">Respondemos de lunes a viernes, de 8:00 a.m. a 6:00 p.m.</p>
 
-      {/* ----- Formulario ----- */}
-      {/* Qué hace: recoge el mensaje del cliente. Cada campo toma su valor del
-          estado y lo actualiza con onChange: son campos controlados. */}
-      <form onSubmit={manejarEnvio}>
-        <p>
-          <label htmlFor="nombreContacto">Nombre: </label>
-          <input
-            id="nombreContacto"
-            type="text"
-            name="nombre"
-            value={datos.nombre}
-            onChange={manejarCambio}
-          />
-          {errores.nombre && <strong> {errores.nombre}</strong>}
-        </p>
+      <Row className="g-4">
+        <Col lg={8}>
+          <Card className="shadow-sm border-0">
+            <Card.Body>
+              {/* ----- Formulario ----- */}
+              {/* Qué hace: recoge el mensaje del cliente. Cada campo toma su valor del
+                  estado y lo actualiza con onChange: son campos controlados. */}
+              <Form onSubmit={manejarEnvio}>
+                <Row>
+                  <Form.Group as={Col} md={6} className="mb-3" controlId="nombreContacto">
+                    <Form.Label>Nombre</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="nombre"
+                      value={datos.nombre}
+                      onChange={manejarCambio}
+                      isInvalid={!!errores.nombre}
+                    />
+                    <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
+                  </Form.Group>
 
-        <p>
-          <label htmlFor="emailContacto">Correo electronico: </label>
-          <input
-            id="emailContacto"
-            type="email"
-            name="email"
-            value={datos.email}
-            onChange={manejarCambio}
-          />
-          {errores.email && <strong> {errores.email}</strong>}
-        </p>
+                  <Form.Group as={Col} md={6} className="mb-3" controlId="emailContacto">
+                    <Form.Label>Correo electronico</Form.Label>
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      value={datos.email}
+                      onChange={manejarCambio}
+                      isInvalid={!!errores.email}
+                    />
+                    <Form.Control.Feedback type="invalid">{errores.email}</Form.Control.Feedback>
+                  </Form.Group>
+                </Row>
 
-        <p>
-          <label htmlFor="asuntoContacto">Asunto: </label>
-          <select
-            id="asuntoContacto"
-            name="asunto"
-            value={datos.asunto}
-            onChange={manejarCambio}
-          >
-            <option value="">Selecciona un asunto</option>
-            {ASUNTOS.map((texto) => (
-              <option key={texto} value={texto}>
-                {texto}
-              </option>
-            ))}
-          </select>
-          {errores.asunto && <strong> {errores.asunto}</strong>}
-        </p>
+                <Form.Group className="mb-3" controlId="asuntoContacto">
+                  <Form.Label>Asunto</Form.Label>
+                  <Form.Select
+                    name="asunto"
+                    value={datos.asunto}
+                    onChange={manejarCambio}
+                    isInvalid={!!errores.asunto}
+                  >
+                    <option value="">Selecciona un asunto</option>
+                    {ASUNTOS.map((texto) => (
+                      <option key={texto} value={texto}>
+                        {texto}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <Form.Control.Feedback type="invalid">{errores.asunto}</Form.Control.Feedback>
+                </Form.Group>
 
-        <p>
-          <label htmlFor="mensajeContacto">Mensaje: </label>
-          <br />
-          <textarea
-            id="mensajeContacto"
-            name="mensaje"
-            rows={5}
-            cols={50}
-            maxLength={MAX_CARACTERES}
-            value={datos.mensaje}
-            onChange={manejarCambio}
-          />
-          <br />
-          Caracteres usados: {caracteresUsados} de {MAX_CARACTERES}. Quedan{' '}
-          {caracteresRestantes}.
-          {errores.mensaje && <strong> {errores.mensaje}</strong>}
-        </p>
+                <Form.Group className="mb-3" controlId="mensajeContacto">
+                  <Form.Label>Mensaje</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    name="mensaje"
+                    rows={5}
+                    maxLength={MAX_CARACTERES}
+                    value={datos.mensaje}
+                    onChange={manejarCambio}
+                    isInvalid={!!errores.mensaje}
+                  />
+                  <Form.Control.Feedback type="invalid">{errores.mensaje}</Form.Control.Feedback>
+                  <Form.Text muted>
+                    Caracteres usados: {caracteresUsados} de {MAX_CARACTERES}. Quedan{' '}
+                    {caracteresRestantes}.
+                  </Form.Text>
+                </Form.Group>
 
-        <p>
-          <button type="submit">Enviar mensaje</button>
-        </p>
-      </form>
+                <Button type="submit" variant="primary">
+                  Enviar mensaje
+                </Button>
+              </Form>
 
-      {enviado && (
-        <p>
-          <mark>Mensaje enviado. Te responderemos al correo registrado.</mark>
-        </p>
-      )}
+              {enviado && (
+                <Alert variant="success" className="mt-3 mb-0">
+                  Mensaje enviado. Te responderemos al correo registrado.
+                </Alert>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
 
-      <hr />
-
-      <h3>Otros canales</h3>
-      <ul>
-        <li>Correo: ventas@tecnostore.com</li>
-        <li>Telefono: (601) 555 0199</li>
-        <li>Sede principal: Bogota, Colombia</li>
-      </ul>
-    </main>
+        <Col lg={4}>
+          <Card className="shadow-sm border-0">
+            <Card.Header as="h3" className="fs-5">Otros canales</Card.Header>
+            <ListGroup variant="flush">
+              <ListGroup.Item>Correo: ventas@tecnostore.com</ListGroup.Item>
+              <ListGroup.Item>Telefono: (601) 555 0199</ListGroup.Item>
+              <ListGroup.Item>Sede principal: Bogota, Colombia</ListGroup.Item>
+            </ListGroup>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

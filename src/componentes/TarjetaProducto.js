@@ -1,3 +1,4 @@
+import { Card, Badge, Button, ListGroup } from 'react-bootstrap';
 import { formatearPrecio } from '../datos/tasasCambio';
 import { rutaImagen } from '../datos/productos';
 
@@ -14,61 +15,75 @@ function TarjetaProducto({ producto, moneda, agregarAlCarrito }) {
   }
 
   return (
-    <article draggable={producto.disponible} onDragStart={iniciarArrastre}>
-      <h4>{producto.nombre}</h4>
-
+    <Card
+      className="tarjeta-producto h-100 shadow-sm border-0"
+      draggable={producto.disponible}
+      onDragStart={iniciarArrastre}
+    >
       {/* ----- Imágenes ----- */}
-      <p>
-        <img
-          src={rutaImagen(producto)}
-          alt={producto.nombre}
-          width="220"
-          height="150"
-        />
-      </p>
+      <Card.Img
+        variant="top"
+        src={rutaImagen(producto)}
+        alt={producto.nombre}
+        className="imagen-producto"
+      />
 
-      <p>{producto.descripcion}</p>
+      <Card.Body className="d-flex flex-column">
+        <div className="mb-2">
+          <Badge bg="secondary" className="me-1">{producto.categoria}</Badge>
+          {producto.envioGratis && <Badge bg="info" className="me-1">Envio gratis</Badge>}
+          <Badge bg={producto.disponible ? 'success' : 'danger'}>
+            {producto.disponible ? 'Disponible' : 'Agotado'}
+          </Badge>
+        </div>
 
-      {/* ----- Objetos ----- */}
-      {/* Qué hace: lee las propiedades del objeto producto para mostrarlas. */}
-      <ul>
-        <li>Marca: {producto.marca}</li>
-        <li>Categoria: {producto.categoria}</li>
-        <li>Precio: {formatearPrecio(producto.precio, moneda)}</li>
-        <li>Envio: {producto.envioGratis ? 'Gratis' : 'Con costo adicional'}</li>
-        <li>Estado: {producto.disponible ? 'Disponible' : 'Agotado'}</li>
-      </ul>
+        <Card.Title as="h4" className="fs-5">{producto.nombre}</Card.Title>
+        <Card.Subtitle className="mb-2 text-muted">{producto.marca}</Card.Subtitle>
 
-      <details>
-        <summary>Ver especificaciones tecnicas</summary>
+        <Card.Text className="small">{producto.descripcion}</Card.Text>
+
         {/* ----- Objetos ----- */}
-        {/* Qué hace: Object.entries recorre el sub-objeto "especificaciones"
-            y devuelve pares de atributo y valor para listarlos. */}
-        <ul>
-          {Object.entries(producto.especificaciones).map(([atributo, valor]) => (
-            <li key={atributo}>
-              {atributo}: {valor}
-            </li>
-          ))}
-        </ul>
-      </details>
+        {/* Qué hace: lee las propiedades del objeto producto para mostrarlas. */}
+        <p className="fs-4 fw-bold text-primary text-nowrap mb-2">
+          {formatearPrecio(producto.precio, moneda)}
+        </p>
 
-      <p>
-        {/* ----- Evento ----- */}
-        {/* Qué hace: onClick avisa al componente padre que hay que agregar
-            este producto al carrito. Si está agotado, el botón se deshabilita. */}
-        <button
-          type="button"
-          disabled={!producto.disponible}
-          onClick={() => agregarAlCarrito(producto)}
-        >
-          {producto.disponible ? 'Agregar al carrito' : 'Producto agotado'}
-        </button>
-        {producto.disponible && <small> o arrastra la tarjeta al carrito</small>}
-      </p>
+        <details className="mb-3 small">
+          <summary>Ver especificaciones tecnicas</summary>
+          {/* ----- Objetos ----- */}
+          {/* Qué hace: Object.entries recorre el sub-objeto "especificaciones"
+              y devuelve pares de atributo y valor para listarlos. */}
+          <ListGroup variant="flush" className="mt-2">
+            {Object.entries(producto.especificaciones).map(([atributo, valor]) => (
+              <ListGroup.Item key={atributo} className="px-0 py-1">
+                <span className="text-muted">{atributo}:</span> {valor}
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        </details>
 
-      <hr />
-    </article>
+        {/* mt-auto empuja el botón al fondo para que todas las tarjetas de la
+            fila queden alineadas aunque tengan textos de distinto largo. */}
+        <div className="mt-auto">
+          {/* ----- Evento ----- */}
+          {/* Qué hace: onClick avisa al componente padre que hay que agregar
+              este producto al carrito. Si está agotado, el botón se deshabilita. */}
+          <Button
+            className="w-100"
+            variant={producto.disponible ? 'primary' : 'outline-secondary'}
+            disabled={!producto.disponible}
+            onClick={() => agregarAlCarrito(producto)}
+          >
+            {producto.disponible ? 'Agregar al carrito' : 'Producto agotado'}
+          </Button>
+          {producto.disponible && (
+            <small className="d-block text-center text-muted mt-1">
+              o arrastra la tarjeta al carrito
+            </small>
+          )}
+        </div>
+      </Card.Body>
+    </Card>
   );
 }
 

@@ -199,15 +199,20 @@ function App() {
     );
   }
 
+  // d-flex, flex-column y min-vh-100 hacen que la página ocupe toda la altura
+  // de la pantalla, para que el pie quede abajo aunque haya poco contenido.
   return (
-    <div>
+    <div className="d-flex flex-column min-vh-100">
       <Encabezado
         seccion={seccion}
         cambiarSeccion={cambiarSeccion}
         moneda={moneda}
         setMoneda={setMoneda}
+        carrito={carrito}
         unidades={unidades}
         pedidosHechos={pedidos.length}
+        agregarAlCarrito={agregarAlCarrito}
+        eliminarDelCarrito={eliminarDelCarrito}
       />
 
       {mostrarSeccion()}
