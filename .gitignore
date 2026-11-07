@@ -13,6 +13,10 @@
 
 # misc
 .DS_Store
+# Credenciales de la base de datos: nunca se suben a GitHub.
+# El archivo .env.example (sin contraseña) sí se sube como guía.
+.env
+servidor/.env
 .env.local
 .env.development.local
 .env.test.local

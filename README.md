@@ -13,6 +13,22 @@ npm start
 
 La aplicacion queda en http://localhost:3000
 
+### Servidor y base de datos MySQL
+
+React no se conecta directo a MySQL: lo hace un servidor en Node (carpeta
+`servidor/`) y React le pide los datos por `/api`.
+
+1. Copiar `servidor/.env.example` como `servidor/.env` y escribir la
+   contraseña de MySQL. Ese archivo no se sube a GitHub.
+2. En otra terminal, arrancar el servidor:
+
+```
+npm run servidor
+```
+
+El servidor queda en http://localhost:4000. Para comprobar la conexion se
+abre http://localhost:4000/api/estado.
+
 ## Por que este tema
 
 Somos estudiantes de Ingenieria de Sistemas y comprar tecnologia es una decision

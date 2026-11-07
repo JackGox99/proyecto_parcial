@@ -18,6 +18,7 @@ function Encabezado({ seccion, cambiarSeccion, moneda, setMoneda, carrito, unida
     { clave: 'novedades', texto: 'Novedades en linea' },
     { clave: 'pedidos', texto: 'Mis pedidos', contador: pedidosHechos },
     { clave: 'contacto', texto: 'Contacto' },
+    { clave: 'administrar', texto: 'Administrar' },
   ];
 
   // ----- Evento -----

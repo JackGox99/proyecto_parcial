@@ -6,6 +6,7 @@ import Novedades from './componentes/Novedades';
 import Carrito from './componentes/Carrito';
 import Pedidos from './componentes/Pedidos';
 import Contacto from './componentes/Contacto';
+import AdminProductos from './componentes/AdminProductos';
 import PiePagina from './componentes/PiePagina';
 
 // Nombres con los que quedan guardados el carrito y el historial de compras
@@ -188,6 +189,10 @@ function App() {
 
     if (seccion === 'contacto') {
       return <Contacto />;
+    }
+
+    if (seccion === 'administrar') {
+      return <AdminProductos moneda={moneda} />;
     }
 
     return (
