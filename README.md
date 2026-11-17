@@ -29,6 +29,36 @@ npm run servidor
 El servidor queda en http://localhost:4000. Para comprobar la conexion se
 abre http://localhost:4000/api/estado.
 
+### Con Docker (pagina, servidor y MySQL juntos)
+
+Con Docker no hace falta tener MySQL ni Node instalados. Se levantan tres
+contenedores: `tecnostore_mysql`, `tecnostore_backend` y `tecnostore_frontend`.
+
+1. Copiar `.env.example` como `.env` (en la raiz) y escribir la contraseña
+   que tendra MySQL. Ese archivo no se sube a GitHub.
+2. Construir y arrancar:
+
+```
+docker compose up -d --build
+```
+
+| Que | Direccion |
+|---|---|
+| Pagina | http://localhost:8090 |
+| Servidor | http://localhost:4100/api/estado |
+| MySQL (Workbench) | 127.0.0.1, puerto 3307, usuario root |
+
+La primera vez MySQL ejecuta `servidor/base_de_datos.sql` y crea las tablas con
+los 8 productos. Los datos quedan en un volumen y se conservan entre reinicios.
+
+```
+docker compose logs -f backend   ver lo que imprime el servidor
+docker compose down              detener (los datos se conservan)
+docker compose down -v           detener y borrar la base de datos
+```
+
+Si un puerto ya esta ocupado se cambia en el archivo `.env`.
+
 ## Por que este tema
 
 Somos estudiantes de Ingenieria de Sistemas y comprar tecnologia es una decision

@@ -1,0 +1,71 @@
+# =====================================================================
+# TecnoStore con Docker: base de datos, servidor y página.
+#
+#   docker compose up -d --build    construye y arranca todo
+#   docker compose logs -f backend  ver lo que imprime el servidor
+#   docker compose down             detiene todo (los datos se conservan)
+#   docker compose down -v          detiene y BORRA la base de datos
+#
+# Los datos sensibles salen del archivo .env (copia de .env.example),
+# que no se sube a GitHub.
+# =====================================================================
+
+services:
+
+  # ----- Base de datos -----
+  db:
+    image: mysql:8.4
+    container_name: tecnostore_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Falta MYSQL_ROOT_PASSWORD en el archivo .env}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-parcial}
+    ports:
+      # Puerto para conectarse desde Workbench. No es 3306 para no chocar
+      # con el MySQL instalado en el equipo.
+      - "${PUERTO_MYSQL:-3307}:3306"
+    volumes:
+      # Los datos viven en un volumen: sobreviven aunque se borre el contenedor.
+      - datos_mysql:/var/lib/mysql
+      # El script crea las tablas y carga los productos. MySQL solo lo
+      # ejecuta la primera vez, cuando el volumen está vacío.
+      - ./servidor/base_de_datos.sql:/docker-entrypoint-initdb.d/01_base_de_datos.sql:ro
+    healthcheck:
+      # El servidor no arranca hasta que MySQL responda.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  # ----- Servidor (Express) -----
+  backend:
+    build: ./servidor
+    container_name: tecnostore_backend
+    restart: unless-stopped
+    environment:
+      # Dentro de la red de Docker, MySQL se encuentra por el nombre "db".
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE:-parcial}
+      PUERTO: 4000
+    ports:
+      - "${PUERTO_BACKEND:-4100}:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ----- Página (React servido por Nginx) -----
+  frontend:
+    build: .
+    container_name: tecnostore_frontend
+    restart: unless-stopped
+    ports:
+      - "${PUERTO_FRONTEND:-8090}:80"
+    depends_on:
+      - backend
+
+volumes:
+  datos_mysql:
